@@ -4,58 +4,52 @@
 
 The backend follows a **layered monolithic architecture** with clear separation of concerns. Each layer has a single responsibility, making the codebase testable, maintainable, and easy to extend.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     CLIENT (Frontend)                       │
-│                   Next.js + TailwindCSS                     │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ HTTP (REST)
-┌──────────────────────────▼──────────────────────────────────┐
-│                    API GATEWAY LAYER                         │
-│  ┌──────────┐ ┌──────┐ ┌────────────┐ ┌───────────────────┐│
-│  │  Helmet   │ │ CORS │ │ Rate Limit │ │  Morgan Logger    ││
-│  └──────────┘ └──────┘ └────────────┘ └───────────────────┘│
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│                     ROUTES LAYER                             │
-│  ┌────────────────────────────────────────────────────────┐ │
-│  │  Zod Validation Middleware → Controller Dispatch       │ │
-│  └────────────────────────────────────────────────────────┘ │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│                   CONTROLLER LAYER                           │
-│  ┌──────────────────┐  ┌──────────────────┐                 │
-│  │ ticketController  │  │  aiController    │                 │
-│  │ (asyncHandler)    │  │  (asyncHandler)  │                 │
-│  └────────┬─────────┘  └────────┬─────────┘                 │
-└───────────┼──────────────────────┼──────────────────────────┘
-            │                      │
-┌───────────▼──────────────────────▼──────────────────────────┐
-│                    SERVICE LAYER                             │
-│  ┌──────────────────┐  ┌──────────────────┐                 │
-│  │  ticketService    │──│    aiService     │                 │
-│  │  (Business Logic) │  │  (Mistral AI)    │                 │
-│  └────────┬─────────┘  └──────────────────┘                 │
-└───────────┼─────────────────────────────────────────────────┘
-            │
-┌───────────▼─────────────────────────────────────────────────┐
-│                      DAO LAYER                               │
-│  ┌──────────────────┐  ┌──────────────────┐                 │
-│  │    ticketDao      │  │   messageDao     │                 │
-│  │  (Mongoose Ops)   │  │  (Mongoose Ops)  │                 │
-│  └────────┬─────────┘  └────────┬─────────┘                 │
-└───────────┼──────────────────────┼──────────────────────────┘
-            │                      │
-┌───────────▼──────────────────────▼──────────────────────────┐
-│                     DATA LAYER                               │
-│              MongoDB (Atlas / Local)                         │
-│  ┌──────────────────┐  ┌──────────────────┐                 │
-│  │  Tickets          │  │   Messages       │                 │
-│  │  Collection       │  │   Collection     │                 │
-│  └──────────────────┘  └──────────────────┘                 │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    Client["Client (Frontend)<br>Next.js + TailwindCSS"]
+    
+    subgraph API Gateway Layer
+        Helmet["Helmet"]
+        CORS["CORS"]
+        RateLimit["Rate Limit"]
+        Logger["Morgan Logger"]
+    end
+    
+    subgraph Routes Layer
+        Router["Zod Validation Middleware → Controller Dispatch"]
+    end
+    
+    subgraph Controller Layer
+        TicketCtrl["ticketController<br>(asyncHandler)"]
+        AICtrl["aiController<br>(asyncHandler)"]
+    end
+    
+    subgraph Service Layer
+        TicketSvc["ticketService<br>(Business Logic)"]
+        AISvc["aiService<br>(Mistral AI)"]
+    end
+    
+    subgraph DAO Layer
+        TicketDao["ticketDao<br>(Mongoose Ops)"]
+        MessageDao["messageDao<br>(Mongoose Ops)"]
+    end
+    
+    subgraph Data Layer
+        DB[(MongoDB<br>Tickets & Messages)]
+    end
+
+    Client -->|HTTP REST| Helmet
+    Helmet --> CORS --> RateLimit --> Logger
+    Logger --> Router
+    Router --> TicketCtrl
+    Router --> AICtrl
+    TicketCtrl --> TicketSvc
+    AICtrl --> AISvc
+    TicketSvc -.-> AISvc
+    TicketSvc --> TicketDao
+    TicketSvc --> MessageDao
+    TicketDao --> DB
+    MessageDao --> DB
 ```
 
 ### Layer Responsibilities
@@ -153,16 +147,22 @@ The backend follows a **layered monolithic architecture** with clear separation 
 
 ### AI Pipeline
 
-```
-┌──────────────┐     ┌─────────────────┐     ┌──────────────────┐
-│  Controller  │────▶│  TicketService   │────▶│    AiService     │
-│  (HTTP)      │     │  (Orchestrator)  │     │  (_callMistral)  │
-└──────────────┘     └────────┬────────┘     └────────┬─────────┘
-                              │                        │
-                     ┌────────▼────────┐     ┌────────▼─────────┐
-                     │     DAO Layer   │     │  Mistral AI API  │
-                     │  (Read context) │     │  (Chat Complete) │
-                     └─────────────────┘     └──────────────────┘
+```mermaid
+sequenceDiagram
+    participant C as Controller (HTTP)
+    participant TS as TicketService
+    participant AS as AiService
+    participant DB as DAO Layer
+    participant AI as Mistral AI API
+
+    C->>TS: Request AI Feature
+    TS->>DB: Read Context (Tickets/Messages)
+    DB-->>TS: Context Data
+    TS->>AS: Call Specific AI Method
+    AS->>AI: format prompt & _callMistral()
+    AI-->>AS: AI Response
+    AS-->>TS: Parsed Result
+    TS-->>C: JSON Response
 ```
 
 ### Prompt Engineering Strategy
@@ -185,15 +185,20 @@ All prompts follow a **structured output pattern** to ensure reliable parsing:
 
 ### Error Handling Strategy
 
-```
-AI Call ──▶ Success ──▶ Parse Response ──▶ Validate ──▶ Return
-  │                           │
-  ▼                           ▼
-Error ──▶ Log Error    Parse Fail ──▶ Return Default
-  │
-  ▼
-Graceful Degradation
-(neutral sentiment, general category, no escalation)
+```mermaid
+graph LR
+    A[AI Call] --> B{Success?}
+    B -- Yes --> C[Parse Response]
+    C --> D{Valid?}
+    D -- Yes --> E[Return Result]
+    D -- No --> F[Parse Fail]
+    B -- No --> G[Error]
+    
+    G --> H[Log Error]
+    F --> I[Return Default]
+    H --> I
+    
+    I --> J[Graceful Degradation<br/>Neutral/General/No Escalation]
 ```
 
 ---
@@ -234,27 +239,25 @@ Graceful Degradation
 
 ### Production Deployment Recommendations
 
-```
-                    ┌─────────────┐
-                    │   Nginx /   │
-                    │  CloudFlare │
-                    └──────┬──────┘
-                           │
-              ┌────────────┼────────────┐
-              │            │            │
-        ┌─────▼────┐ ┌────▼─────┐ ┌────▼─────┐
-        │ Node.js  │ │ Node.js  │ │ Node.js  │
-        │ Instance │ │ Instance │ │ Instance │
-        └─────┬────┘ └────┬─────┘ └────┬─────┘
-              │            │            │
-              └────────────┼────────────┘
-                           │
-              ┌────────────┼────────────┐
-              │                         │
-        ┌─────▼────┐            ┌──────▼──────┐
-        │  Redis   │            │  MongoDB    │
-        │ (Cache)  │            │  (Atlas)    │
-        └──────────┘            └─────────────┘
+```mermaid
+graph TD
+    Client((Client)) --> LB[Nginx / CloudFlare Load Balancer]
+    
+    subgraph Application Tier
+        LB --> Node1[Node.js Instance 1]
+        LB --> Node2[Node.js Instance 2]
+        LB --> Node3[Node.js Instance 3]
+    end
+    
+    subgraph Data Tier
+        Node1 -.-> Redis[(Redis Cache)]
+        Node2 -.-> Redis
+        Node3 -.-> Redis
+        
+        Node1 --> Mongo[(MongoDB Atlas)]
+        Node2 --> Mongo
+        Node3 --> Mongo
+    end
 ```
 
 This architecture supports horizontal scaling of the application tier while using managed services for data persistence and caching.

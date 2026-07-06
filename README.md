@@ -1,19 +1,32 @@
-# 🛡️ AI-Powered Customer Support Dashboard
+# 🛡️ ReeRoute: AI-Powered Customer Support Dashboard
 
-> **ReeRoute** — AI-assisted support operations platform for modern customer service teams
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=flat&logo=node.js)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat&logo=mongodb)](https://mongodb.com/)
+[![Mistral AI](https://img.shields.io/badge/AI-Mistral_Medium-F58025?style=flat)](https://mistral.ai/)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
-An intelligent customer support dashboard that empowers support agents to manage tickets, track conversations, and leverage AI-powered workflows to resolve customer issues faster.
+> **ReeRoute** is a modern, AI-assisted support operations platform designed to empower customer service teams.
+
+Built for the Full Stack Engineering Assignment, this dashboard allows support agents to manage tickets, track conversations, and leverage advanced AI-powered workflows to resolve customer issues efficiently while maintaining human-in-the-loop oversight.
 
 ## 🏗️ Tech Stack
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Frontend** | Next.js + TailwindCSS | Server-side rendered React dashboard |
-| **Backend** | Node.js + Express 5 | RESTful API with layered architecture |
-| **Database** | MongoDB + Mongoose 9 | Document store with ODM |
-| **AI Engine** | Mistral AI (Medium model) | Summarization, categorization, sentiment, escalation |
-| **Validation** | Zod v4 | Schema-based request validation |
-| **Security** | Helmet + express-rate-limit | HTTP hardening and rate limiting |
+| **Frontend** | Next.js + TailwindCSS | Server-side rendered React dashboard with modern glassmorphism UI |
+| **Backend** | Node.js + Express 5 | RESTful API using layered monolithic architecture |
+| **Database** | MongoDB + Mongoose 9 | Document store with advanced indexing and text search |
+| **AI Engine** | Mistral AI | Core AI capabilities (Summarization, categorization, sentiment, escalation) |
+| **Validation** | Zod v4 | Strict schema-based request and environment validation |
+| **Security** | Helmet + Rate Limit | HTTP hardening and robust API rate limiting |
+
+```mermaid
+graph LR
+    A[Next.js Frontend] <-->|REST API| B(Express Backend)
+    B <-->|Mongoose| C[(MongoDB Atlas)]
+    B <-->|SDK| D{Mistral AI}
+```
 
 ## ✨ Key Features
 

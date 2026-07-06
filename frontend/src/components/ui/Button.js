@@ -1,0 +1,65 @@
+import React from "react";
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+const buttonVariants = {
+  primary: "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/10 focus:ring-indigo-500",
+  secondary: "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 focus:ring-slate-600",
+  success: "bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/10 focus:ring-emerald-500",
+  danger: "bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/10 focus:ring-rose-500",
+  ghost: "hover:bg-slate-800 text-slate-400 hover:text-slate-200 focus:ring-slate-700",
+  outline: "border border-slate-700 hover:bg-slate-800 text-slate-300 focus:ring-slate-700",
+  ai: "bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white shadow-md shadow-indigo-500/20 border-0 focus:ring-indigo-500 font-semibold tracking-wide",
+};
+
+const buttonSizes = {
+  sm: "px-2.5 py-1.5 text-xs rounded-md",
+  md: "px-3.5 py-2 text-sm rounded-lg",
+  lg: "px-5 py-2.5 text-base rounded-lg",
+};
+
+export default function Button({
+  children,
+  variant = "secondary",
+  size = "md",
+  className,
+  disabled,
+  isLoading,
+  ...props
+}) {
+  return (
+    <button
+      disabled={disabled || isLoading}
+      className={twMerge(
+        "inline-flex items-center justify-center font-medium transition-all duration-250 select-none outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer gap-2",
+        buttonVariants[variant],
+        buttonSizes[size],
+        className
+      )}
+      {...props}
+    >
+      {isLoading ? (
+        <svg
+          className="animate-spin -ml-1 mr-1 h-4 w-4 text-current"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          />
+        </svg>
+      ) : null}
+      {children}
+    </button>
+  );
+}
