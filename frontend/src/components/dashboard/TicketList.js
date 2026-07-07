@@ -22,6 +22,11 @@ export default function TicketList({
 }) {
   // Debounced search
   const [searchText, setSearchText] = useState(filters.q || "");
+  const [showFilters, setShowFilters] = useState(false);
+
+  const hasActiveFilters = Boolean(
+    filters.status || filters.priority || filters.category || filters.sentiment || filters.escalated
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -63,6 +68,22 @@ export default function TicketList({
               {total} Total
             </span>
           </h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+            className={`text-[10px] uppercase font-bold tracking-wider h-7 px-2 border ${
+              showFilters || hasActiveFilters
+                ? "text-brand-orange bg-orange-50 border-orange-200"
+                : "text-slate-500 border-transparent"
+            }`}
+          >
+            <Funnel size={14} weight={hasActiveFilters ? "fill" : "regular"} />
+            {showFilters ? "Hide Filters" : "Show Filters"}
+            {hasActiveFilters && !showFilters && (
+              <span className="flex h-2 w-2 rounded-full bg-brand-orange ml-1"></span>
+            )}
+          </Button>
         </div>
         
         {/* Search Input */}
@@ -78,8 +99,9 @@ export default function TicketList({
       </div>
 
       {/* Filters & Sorting Panel */}
-      <div className="p-4 border-b border-slate-200 bg-slate-50 grid grid-cols-2 gap-2 text-xs">
-        <div>
+      {showFilters && (
+        <div className="p-4 border-b border-slate-200 bg-slate-50 grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs shrink-0 animate-in slide-in-from-top-2 fade-in duration-200">
+          <div>
           <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1 font-semibold">Status</label>
           <Select
             value={filters.status || ""}
@@ -140,7 +162,7 @@ export default function TicketList({
           </Select>
         </div>
 
-        <div className="col-span-2 grid grid-cols-5 gap-2 pt-1 border-t border-slate-200 mt-1">
+        <div className="col-span-2 lg:col-span-4 grid grid-cols-5 gap-2 pt-2 border-t border-slate-200 mt-1">
           <div className="col-span-3">
             <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1 font-semibold">Sort By</label>
             <Select
@@ -175,7 +197,7 @@ export default function TicketList({
           </div>
         </div>
 
-        <div className="col-span-2 pt-1 flex items-center justify-between border-t border-slate-200 mt-1">
+        <div className="col-span-2 lg:col-span-4 pt-1 flex items-center justify-between border-t border-slate-200 mt-1">
           <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Escalated Only</span>
           <input
             type="checkbox"
@@ -185,6 +207,7 @@ export default function TicketList({
           />
         </div>
       </div>
+      )}
 
       {/* Table Header (only visible when expanded) */}
       {isExpanded && !isLoading && tickets.length > 0 && (
