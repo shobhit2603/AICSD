@@ -18,6 +18,7 @@ export default function TicketList({
   activeTicketId,
   onSelectTicket,
   isLoading,
+  isExpanded = false,
 }) {
   // Debounced search
   const [searchText, setSearchText] = useState(filters.q || "");
@@ -51,14 +52,14 @@ export default function TicketList({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-950/20 border border-slate-900 rounded-xl overflow-hidden shadow-xl">
+    <div className="flex flex-col h-full bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
       {/* Search & Header */}
-      <div className="p-4 border-b border-slate-900 bg-slate-950/45 flex flex-col gap-3">
+      <div className="p-4 border-b border-slate-200 bg-white flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-            <Funnel size={18} className="text-indigo-400" />
+          <h2 className="text-base font-semibold text-brand-black flex items-center gap-2">
+            <Funnel size={18} className="text-brand-orange" />
             Inbox
-            <span className="text-xs font-normal text-slate-500 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-normal text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full">
               {total} Total
             </span>
           </h2>
@@ -77,7 +78,7 @@ export default function TicketList({
       </div>
 
       {/* Filters & Sorting Panel */}
-      <div className="p-4 border-b border-slate-900 bg-slate-950/20 grid grid-cols-2 gap-2 text-xs">
+      <div className="p-4 border-b border-slate-200 bg-slate-50 grid grid-cols-2 gap-2 text-xs">
         <div>
           <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1 font-semibold">Status</label>
           <Select
@@ -139,7 +140,7 @@ export default function TicketList({
           </Select>
         </div>
 
-        <div className="col-span-2 grid grid-cols-5 gap-2 pt-1 border-t border-slate-900/60 mt-1">
+        <div className="col-span-2 grid grid-cols-5 gap-2 pt-1 border-t border-slate-200 mt-1">
           <div className="col-span-3">
             <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1 font-semibold">Sort By</label>
             <Select
@@ -174,22 +175,34 @@ export default function TicketList({
           </div>
         </div>
 
-        <div className="col-span-2 pt-1 flex items-center justify-between border-t border-slate-900/60 mt-1">
+        <div className="col-span-2 pt-1 flex items-center justify-between border-t border-slate-200 mt-1">
           <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Escalated Only</span>
           <input
             type="checkbox"
             checked={filters.escalated === "true"}
             onChange={(e) => handleFilterChange("escalated", e.target.checked ? "true" : "")}
-            className="rounded border-slate-800 bg-slate-900 text-indigo-600 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
+            className="rounded border-slate-300 bg-white text-brand-blue focus:ring-brand-blue h-4 w-4 cursor-pointer"
           />
         </div>
       </div>
 
+      {/* Table Header (only visible when expanded) */}
+      {isExpanded && !isLoading && tickets.length > 0 && (
+        <div className="grid grid-cols-12 gap-4 px-5 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-white border-b border-slate-200">
+          <div className="col-span-3">Ticket & Date</div>
+          <div className="col-span-2">Customer</div>
+          <div className="col-span-2">Category</div>
+          <div className="col-span-1">Status</div>
+          <div className="col-span-1">Priority</div>
+          <div className="col-span-3 flex justify-end">Badges</div>
+        </div>
+      )}
+
       {/* Ticket List Body */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 min-h-0 bg-slate-950/10">
+      <div className={`flex-1 overflow-y-auto p-4 flex flex-col min-h-0 bg-slate-50 ${isExpanded ? 'gap-1.5' : 'gap-3'}`}>
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="animate-pulse rounded-xl border border-slate-900 bg-slate-900/10 p-4 h-28" />
+            <div key={i} className="animate-pulse rounded-xl border border-slate-200 bg-white p-4 h-28" />
           ))
         ) : tickets.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -201,6 +214,7 @@ export default function TicketList({
               key={ticket._id}
               ticket={ticket}
               isActive={ticket._id === activeTicketId}
+              isExpanded={isExpanded}
               onClick={() => onSelectTicket(ticket._id)}
             />
           ))
@@ -208,7 +222,7 @@ export default function TicketList({
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-3 border-t border-slate-900 bg-slate-950/45 flex items-center justify-between gap-2">
+      <div className="p-3 border-t border-slate-200 bg-white flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
           <Select
             value={limit}
@@ -229,11 +243,11 @@ export default function TicketList({
             size="sm"
             disabled={page <= 1}
             onClick={() => handlePageChange(page - 1)}
-            className="h-7 w-7 p-0 flex items-center justify-center border border-slate-800"
+            className="h-7 w-7 p-0 flex items-center justify-center border border-slate-200"
           >
             <CaretLeft size={16} />
           </Button>
-          <span className="text-xs text-slate-400 font-medium">
+          <span className="text-xs text-slate-600 font-medium">
             {page} / {totalPages}
           </span>
           <Button
@@ -241,7 +255,7 @@ export default function TicketList({
             size="sm"
             disabled={page >= totalPages}
             onClick={() => handlePageChange(page + 1)}
-            className="h-7 w-7 p-0 flex items-center justify-center border border-slate-800"
+            className="h-7 w-7 p-0 flex items-center justify-center border border-slate-200"
           >
             <CaretRight size={16} />
           </Button>

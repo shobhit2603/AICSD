@@ -29,10 +29,10 @@ export default function InternalNotesView({ ticketId, notes = [] }) {
   };
 
   return (
-    <div className="flex flex-col h-[500px] border border-slate-900 rounded-xl bg-slate-950/20 overflow-hidden shadow-inner p-4 gap-4">
+    <div className="flex flex-col h-[500px] border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm p-4 gap-4">
       {/* Note Composition Box */}
-      <form onSubmit={handleAddNote} className="flex flex-col gap-2 bg-slate-950/45 p-3 rounded-lg border border-slate-900">
-        <span className="text-[10px] uppercase font-bold text-amber-500 flex items-center gap-1.5 select-none">
+      <form onSubmit={handleAddNote} className="flex flex-col gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+        <span className="text-[10px] uppercase font-bold text-brand-orange flex items-center gap-1.5 select-none">
           <Note size={14} weight="fill" />
           Add Private Agent Note
         </span>
@@ -68,11 +68,11 @@ export default function InternalNotesView({ ticketId, notes = [] }) {
           [...notes].reverse().map((note, i) => (
             <Card
               key={note._id || i}
-              className="bg-amber-950/5 border-amber-900/25 p-3.5 rounded-lg flex flex-col gap-2 border shadow-sm"
+              className="bg-orange-50 border-orange-200 p-3.5 rounded-lg flex flex-col gap-2 border shadow-sm"
             >
               {/* Note Header */}
               <div className="flex items-center justify-between text-[10px] text-slate-500 select-none">
-                <span className="font-semibold text-amber-400">By {note.createdBy}</span>
+                <span className="font-semibold text-brand-orange">By {note.createdBy}</span>
                 <span className="flex items-center gap-1">
                   <CalendarBlank size={10} />
                   {new Date(note.createdAt).toLocaleDateString("en-US", {
@@ -85,7 +85,7 @@ export default function InternalNotesView({ ticketId, notes = [] }) {
               </div>
               
               {/* Note Content */}
-              <p className="text-xs text-slate-300 leading-relaxed wrap-break-word whitespace-pre-wrap">
+              <p className="text-xs text-brand-black leading-relaxed wrap-break-word whitespace-pre-wrap">
                 {note.content}
               </p>
             </Card>

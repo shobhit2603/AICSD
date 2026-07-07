@@ -4,8 +4,9 @@ import React, { useState, useCallback } from "react";
 import StatsOverview from "../components/dashboard/StatsOverview";
 import TicketList from "../components/dashboard/TicketList";
 import TicketDetail from "../components/dashboard/TicketDetail";
+import Sidebar from "../components/layout/Sidebar";
 import { useTickets, useTicketStats } from "../hooks/useTickets";
-import { Sparkle, ShieldCheck } from "@phosphor-icons/react";
+import { Bell } from "@phosphor-icons/react";
 
 export default function Home() {
   const [filters, setFilters] = useState({
@@ -35,7 +36,8 @@ export default function Home() {
   }, []);
 
   const handleSelectTicket = (id) => {
-    setActiveTicketId(id);
+    // Toggle off if already selected
+    setActiveTicketId(prev => prev === id ? null : id);
   };
 
   const tickets = ticketsData?.tickets || [];
@@ -45,68 +47,63 @@ export default function Home() {
   const totalPages = ticketsData?.totalPages || 1;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#07090e] text-slate-100 font-sans">
-      {/* Background Gradients */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-[400px] h-[400px] bg-violet-500/5 rounded-full blur-[100px] pointer-events-none" />
+    <div className="flex w-full min-h-screen bg-slate-50 text-brand-black font-sans">
+      <Sidebar />
 
-      {/* Main Container */}
-      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-6 py-6 flex flex-col gap-6 relative z-10 flex-1">
-        {/* Dashboard Header */}
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-900 pb-5">
-          <div className="flex items-center gap-3">
-            <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-600/20">
-              <ShieldCheck size={26} weight="duotone" />
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        
+        {/* Top Header */}
+        <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 shrink-0 sticky top-0 z-20">
+          <h2 className="text-lg font-medium text-brand-black">Customer Support Dashboard</h2>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-50 transition-colors">
+              <Bell size={20} />
+            </button>
+            <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
+              <span className="text-xs font-bold text-slate-500">RR</span>
             </div>
-            <div>
-              <h1 className="text-lg font-extrabold text-slate-100 flex items-center gap-1.5 leading-none">
-                ReeRoute
-                <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full">
-                  AI CoPilot
-                </span>
-              </h1>
-              <p className="text-xs text-slate-500 mt-1">Founding engineer customer support portal</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-950/40 px-3 py-1.5 rounded-lg border border-slate-900">
-            <Sparkle size={14} className="text-indigo-400 animate-pulse" />
-            <span>Agent Dashboard Connected</span>
           </div>
         </header>
 
-        {/* Real-time KPI Cards */}
-        <StatsOverview
-          stats={statsData?.data}
-          isLoading={isLoadingStats}
-        />
+        {/* Scrollable Content */}
+        <main className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
+          {/* Real-time KPI Cards */}
+          <StatsOverview
+            stats={statsData?.data}
+            isLoading={isLoadingStats}
+          />
 
-        {/* Dashboard Split Screen */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left panel: Master List */}
-          <div className="col-span-1 lg:col-span-4 h-[calc(100vh-270px)] min-h-[500px]">
-            <TicketList
-              tickets={tickets}
-              total={total}
-              page={page}
-              limit={limit}
-              totalPages={totalPages}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              activeTicketId={activeTicketId}
-              onSelectTicket={handleSelectTicket}
-              isLoading={isLoadingTickets}
-            />
-          </div>
+          {/* Dashboard Split/Full Screen */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Master List: Full width if no ticket selected, 4 columns if selected */}
+            <div className={`col-span-1 transition-all duration-300 ease-in-out ${activeTicketId ? "lg:col-span-4" : "lg:col-span-12"} h-[calc(100vh-270px)] min-h-[500px]`}>
+              <TicketList
+                tickets={tickets}
+                total={total}
+                page={page}
+                limit={limit}
+                totalPages={totalPages}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                activeTicketId={activeTicketId}
+                onSelectTicket={handleSelectTicket}
+                isLoading={isLoadingTickets}
+                isExpanded={!activeTicketId}
+              />
+            </div>
 
-          {/* Right panel: Detail View */}
-          <div className="col-span-1 lg:col-span-8 h-[calc(100vh-270px)] min-h-[500px] overflow-y-auto pr-1">
-            <TicketDetail
-              ticketId={activeTicketId}
-              onSelectTicket={handleSelectTicket}
-            />
+            {/* Detail View: Hidden if no ticket selected */}
+            {activeTicketId && (
+              <div className="col-span-1 lg:col-span-8 h-[calc(100vh-270px)] min-h-[500px] overflow-y-auto pr-1 animate-in slide-in-from-right-4 duration-300">
+                <TicketDetail
+                  ticketId={activeTicketId}
+                  onSelectTicket={handleSelectTicket}
+                />
+              </div>
+            )}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

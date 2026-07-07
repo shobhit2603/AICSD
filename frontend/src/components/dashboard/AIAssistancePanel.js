@@ -40,7 +40,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
   return (
     <div className="flex flex-col gap-4">
       {/* AI Actions Row */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-900 pb-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
         <Button
           variant={activeAITab === "summary" ? "primary" : "ghost"}
           size="sm"
@@ -72,8 +72,8 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
         <div className="ml-auto flex items-center gap-2">
           {/* Quick Categorization Trigger */}
           {ticket?.aiConfidence !== undefined && ticket?.aiConfidence !== null && (
-            <div className="text-[10px] text-slate-500 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">
-              AI Confidence: <span className="font-bold text-slate-300">{Math.round(ticket.aiConfidence * 100)}%</span>
+            <div className="text-[10px] text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded">
+              AI Confidence: <span className="font-bold text-brand-black">{Math.round(ticket.aiConfidence * 100)}%</span>
             </div>
           )}
           <Button
@@ -83,7 +83,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
             isLoading={categorizeMutation.isPending}
             className="text-xs py-1"
           >
-            <Sparkle size={12} className="text-violet-400" />
+            <Sparkle size={12} className="text-brand-orange" />
             Auto-Categorize
           </Button>
         </div>
@@ -95,7 +95,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
         {activeAITab === "summary" && (
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">AI Summary</span>
+              <span className="text-xs font-semibold text-brand-black uppercase tracking-wide">AI Summary</span>
               <Button
                 variant="outline"
                 size="sm"
@@ -108,15 +108,15 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
               </Button>
             </div>
             {ticket?.summary ? (
-              <Card className="bg-indigo-950/20 border-indigo-900/40 text-slate-200 text-xs leading-relaxed p-4 shadow-sm border relative">
-                <div className="absolute top-2 right-2 p-1 text-indigo-400">
+              <Card className="bg-blue-50 border-blue-200 text-slate-700 text-xs leading-relaxed p-4 shadow-sm border relative">
+                <div className="absolute top-2 right-2 p-1 text-brand-blue">
                   <Sparkle size={14} weight="fill" className="animate-pulse" />
                 </div>
                 <p className="pr-4">{ticket.summary}</p>
               </Card>
             ) : (
-              <div className="flex flex-col items-center justify-center p-6 border border-dashed border-slate-800 rounded-xl bg-slate-900/10">
-                <Sparkle size={24} className="text-indigo-500/50 mb-2 animate-pulse" />
+              <div className="flex flex-col items-center justify-center p-6 border border-dashed border-slate-300 rounded-xl bg-slate-50">
+                <Sparkle size={24} className="text-brand-blue/50 mb-2 animate-pulse" />
                 <p className="text-xs text-slate-500 text-center max-w-xs mb-3">
                   No summary generated yet. Ask AI to summarize the support thread conversation.
                 </p>
@@ -137,7 +137,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
         {activeAITab === "escalation" && (
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Escalation Checker</span>
+              <span className="text-xs font-semibold text-brand-black uppercase tracking-wide">Escalation Checker</span>
               <Button
                 variant="outline"
                 size="sm"
@@ -152,9 +152,9 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
 
             {/* Display result of check or offer button */}
             {escalationMutation.data?.data ? (
-              <Card className="bg-rose-950/15 border-rose-900/30 text-xs p-4 flex flex-col gap-2">
+              <Card className="bg-rose-50 border-rose-200 text-xs p-4 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 font-bold text-slate-200">
+                  <div className="flex items-center gap-1.5 font-bold text-brand-black">
                     <Warning size={14} className="text-rose-400" />
                     Should Escalate:
                     <Badge variant={escalationMutation.data.data.shouldEscalate ? "urgent" : "closed"} className="ml-1">
@@ -165,7 +165,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
                     Urgency: <span className="font-semibold text-orange-400">{escalationMutation.data.data.urgency}</span>
                   </div>
                 </div>
-                <p className="text-slate-300 leading-relaxed italic bg-slate-950/30 p-2.5 rounded border border-slate-900/40">
+                <p className="text-slate-700 leading-relaxed italic bg-white p-2.5 rounded border border-slate-200">
                   &quot;{escalationMutation.data.data.reason}&quot;
                 </p>
                 {escalationMutation.data.data.shouldEscalate && escalationMutation.data.data.urgency === "high" && (
@@ -175,8 +175,8 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
                 )}
               </Card>
             ) : (
-              <div className="flex flex-col items-center justify-center p-6 border border-dashed border-slate-800 rounded-xl bg-slate-900/10">
-                <Warning size={24} className="text-slate-600 mb-2" />
+              <div className="flex flex-col items-center justify-center p-6 border border-dashed border-slate-300 rounded-xl bg-slate-50">
+                <Warning size={24} className="text-slate-400 mb-2" />
                 <p className="text-xs text-slate-500 text-center max-w-xs mb-3">
                   Check if this ticket shows critical customer frustration, security risks, or needs management support.
                 </p>
@@ -197,7 +197,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
         {activeAITab === "similar" && (
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Similar Resolved Cases</span>
+              <span className="text-xs font-semibold text-brand-black uppercase tracking-wide">Similar Resolved Cases</span>
               <Button
                 variant="outline"
                 size="sm"
@@ -213,7 +213,7 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
             {isLoadingSimilar ? (
               <div className="flex flex-col gap-2">
                 {[1, 2].map((i) => (
-                  <div key={i} className="animate-pulse bg-slate-900/20 border border-slate-900 rounded-lg p-3 h-16" />
+                  <div key={i} className="animate-pulse bg-slate-50 border border-slate-200 rounded-lg p-3 h-16" />
                 ))}
               </div>
             ) : similarData?.data?.similarTickets && similarData.data.similarTickets.length > 0 ? (
@@ -222,11 +222,11 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
                   <div
                     key={i}
                     onClick={() => onSelectTicket(sim.ticketId)}
-                    className="p-3 bg-slate-950/30 border border-slate-800/80 hover:bg-slate-900/50 hover:border-slate-700/80 rounded-lg cursor-pointer flex items-center justify-between gap-3 text-xs transition-all duration-200 group"
+                    className="p-3 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 rounded-lg cursor-pointer flex items-center justify-between gap-3 text-xs transition-all duration-200 group"
                   >
                     <div className="flex flex-col gap-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-slate-200 truncate group-hover:text-indigo-400 transition-colors">
+                        <span className="font-semibold text-brand-black truncate group-hover:text-brand-blue transition-colors">
                           {sim.title}
                         </span>
                         <Badge variant={sim.status} className="text-[9px] px-1 py-0 select-none">
@@ -237,13 +237,13 @@ export default function AIAssistancePanel({ ticketId, ticket, onSelectTicket }) 
                         Match reason: {sim.similarity}
                       </span>
                     </div>
-                    <ArrowRight size={14} className="text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight size={14} className="text-slate-400 group-hover:text-brand-blue group-hover:translate-x-0.5 transition-all" />
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center p-6 border border-dashed border-slate-800 rounded-xl bg-slate-900/10">
-                <ChatText size={24} className="text-slate-600 mb-2" />
+              <div className="flex flex-col items-center justify-center p-6 border border-dashed border-slate-300 rounded-xl bg-slate-50">
+                <ChatText size={24} className="text-slate-400 mb-2" />
                 <p className="text-xs text-slate-500 text-center max-w-xs mb-3">
                   Find similar cases in our database. AI matches contexts, tags, and titles.
                 </p>

@@ -46,30 +46,30 @@ export default function ActivityLogView({ activityLog = [] }) {
   const getActionBg = (action) => {
     switch (action) {
       case "ticket_created":
-        return "bg-emerald-500/10 border-emerald-500/20";
+        return "bg-emerald-50 border-emerald-200";
       case "status_changed":
-        return "bg-indigo-500/10 border-indigo-500/20";
+        return "bg-blue-50 border-blue-200";
       case "priority_changed":
-        return "bg-orange-500/10 border-orange-500/20";
+        return "bg-orange-50 border-orange-200";
       case "note_added":
-        return "bg-amber-500/10 border-amber-500/20";
+        return "bg-amber-50 border-amber-200";
       case "message_sent":
-        return "bg-sky-500/10 border-sky-500/20";
+        return "bg-sky-50 border-sky-200";
       case "ai_summary_generated":
       case "ai_reply_suggested":
       case "ai_categorized":
       case "ai_escalation_checked":
-        return "bg-violet-500/10 border-violet-500/20";
+        return "bg-violet-50 border-violet-200";
       case "escalated":
-        return "bg-rose-500/10 border-rose-500/20";
+        return "bg-rose-50 border-rose-200";
       default:
-        return "bg-slate-800 border-slate-700";
+        return "bg-slate-100 border-slate-200";
     }
   };
 
   return (
-    <div className="flex flex-col h-[500px] border border-slate-900 rounded-xl bg-slate-950/20 overflow-hidden shadow-inner p-5">
-      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 select-none">
+    <div className="flex flex-col h-[500px] border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm p-5">
+      <h3 className="text-xs font-semibold text-brand-black uppercase tracking-wider mb-4 select-none">
         Timeline & Activity Log
       </h3>
 
@@ -80,21 +80,21 @@ export default function ActivityLogView({ activityLog = [] }) {
             <span className="text-xs text-slate-500">No activity logged for this ticket.</span>
           </div>
         ) : (
-          <div className="relative pl-6 border-l border-slate-800/80 flex flex-col gap-6 ml-2 py-1">
+          <div className="relative pl-6 border-l border-slate-200 flex flex-col gap-6 ml-2 py-1">
             {[...activityLog].reverse().map((log, i) => (
               <div key={log._id || i} className="relative flex flex-col gap-1.5 text-xs">
                 {/* Timeline Dot Icon */}
                 <div
                   className={`absolute left-[-35px] top-0 p-1.5 rounded-full border ${getActionBg(
                     log.action
-                  )} flex items-center justify-center bg-slate-950`}
+                  )} flex items-center justify-center bg-white`}
                 >
                   {getActionIcon(log.action)}
                 </div>
 
                 {/* Log Header */}
                 <div className="flex items-center justify-between gap-2 text-[10px] text-slate-500 select-none">
-                  <span className="font-semibold capitalize text-slate-400">
+                  <span className="font-semibold capitalize text-brand-black">
                     {log.action.replace(/_/g, " ")}
                   </span>
                   <span>
@@ -108,13 +108,13 @@ export default function ActivityLogView({ activityLog = [] }) {
                 </div>
 
                 {/* Log Details */}
-                <p className="text-slate-300 bg-slate-900/40 p-2.5 rounded border border-slate-900/60 leading-normal">
+                <p className="text-slate-700 bg-slate-50 p-2.5 rounded border border-slate-200 leading-normal">
                   {log.details}
                 </p>
 
                 {/* Performed By Badge */}
                 <span className="text-[9px] text-slate-500 self-start select-none">
-                  Action performed by: <span className="text-slate-400 capitalize">{log.performedBy}</span>
+                  Action performed by: <span className="text-brand-black capitalize">{log.performedBy}</span>
                 </span>
               </div>
             ))}

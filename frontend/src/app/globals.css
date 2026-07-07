@@ -1,4 +1,10 @@
-@import "tailwindcss";
+ @import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #094567;
+  --color-brand-orange: #e47a25;
+  --color-brand-black: #231f20;
+}
 
 /* Hide scrollbar globally */
 * {

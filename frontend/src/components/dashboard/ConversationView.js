@@ -77,9 +77,9 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
   };
 
   return (
-    <div className="flex flex-col h-[500px] border border-slate-900 rounded-xl bg-slate-950/20 overflow-hidden shadow-inner">
+    <div className="flex flex-col h-[500px] border border-slate-200 rounded-xl bg-slate-50 overflow-hidden shadow-sm">
       {/* Messages Window */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 min-h-0 bg-slate-950/15">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 min-h-0 bg-white">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <span className="text-xs text-slate-500">No message history available. Start the conversation below.</span>
@@ -113,9 +113,9 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
                     <>
                       <span className="font-medium text-slate-400">{ticket?.customer?.name || "Customer"}</span>
                       {customerSentiment && i === messages.length - 1 && (
-                        <div className="flex items-center gap-0.5 ml-1 bg-slate-900/60 px-1 py-0.2 rounded border border-slate-800">
+                        <div className="flex items-center gap-0.5 ml-1 bg-slate-100 px-1 py-0.2 rounded border border-slate-200">
                           {getSentimentIcon(customerSentiment)}
-                          <span className="text-[8px] uppercase font-bold text-slate-400">{customerSentiment}</span>
+                          <span className="text-[8px] uppercase font-bold text-slate-500">{customerSentiment}</span>
                         </div>
                       )}
                     </>
@@ -129,10 +129,10 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
                 <div
                   className={`px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed wrap-break-word border ${
                     isAgent
-                      ? "bg-indigo-600 text-white border-indigo-700/50 rounded-tr-none shadow-md shadow-indigo-600/5"
+                      ? "bg-brand-blue text-white border-brand-blue rounded-tr-none shadow-md shadow-brand-blue/10"
                       : isAI
-                      ? "bg-violet-950/20 text-violet-200 border-violet-800/40 rounded-tl-none"
-                      : `bg-slate-900 text-slate-200 border-slate-800/80 rounded-tl-none ${getSentimentClass(
+                      ? "bg-orange-50 text-brand-orange border-orange-200 rounded-tl-none"
+                      : `bg-slate-100 text-slate-700 border-slate-200 rounded-tl-none ${getSentimentClass(
                           customerSentiment && i === messages.length - 1 ? customerSentiment : ""
                         )}`
                   }`}
@@ -148,7 +148,7 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
 
       {/* AI Draft Response Drawer */}
       {draftReplyMutation.isPending && (
-        <div className="px-4 py-2 border-t border-slate-900/60 bg-indigo-950/10 flex items-center justify-between text-xs animate-pulse">
+        <div className="px-4 py-2 border-t border-slate-200 bg-blue-50/50 flex items-center justify-between text-xs animate-pulse">
           <span className="text-slate-400 flex items-center gap-1.5">
             <Sparkle size={14} className="text-indigo-400 animate-spin" />
             AI drafting suggested reply...
@@ -157,7 +157,7 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
       )}
 
       {draftReplyMutation.data?.data?.suggestedReply && !draftReplyMutation.isPending && (
-        <div className="p-3 border-t border-slate-900 bg-indigo-950/15 flex flex-col gap-2">
+        <div className="p-3 border-t border-slate-200 bg-blue-50/50 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-indigo-400 flex items-center gap-1">
               <Sparkle size={12} weight="fill" />
@@ -173,14 +173,14 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
               Apply Draft
             </Button>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed max-h-24 overflow-y-auto bg-slate-950/50 p-2.5 rounded border border-slate-900/60 select-all">
+          <p className="text-xs text-slate-600 leading-relaxed max-h-24 overflow-y-auto bg-white p-2.5 rounded border border-slate-200 select-all">
             {draftReplyMutation.data.data.suggestedReply}
           </p>
         </div>
       )}
 
       {/* Message Compose Form */}
-      <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-900 bg-slate-950/45 flex flex-col gap-2">
+      <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-200 bg-slate-50 flex flex-col gap-2">
         <div className="flex items-center gap-2">
           {/* Sender Toggle (for simulation/testing) */}
           <div className="flex items-center gap-1">
@@ -188,7 +188,7 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
             <Select
               value={senderType}
               onChange={(e) => setSenderType(e.target.value)}
-              className="text-[10px] h-6 py-0.5 px-1.5 w-20 border-slate-800"
+              className="text-[10px] h-6 py-0.5 px-1.5 w-20 border-slate-300"
             >
               <option value="agent">Agent</option>
               <option value="customer">Customer</option>
@@ -201,7 +201,7 @@ export default function ConversationView({ ticketId, messages = [], ticket }) {
             size="sm"
             onClick={handleGenerateReply}
             isLoading={draftReplyMutation.isPending}
-            className="text-[10px] h-6 py-0.5 ml-auto border-indigo-500/20 hover:bg-indigo-950/40 text-indigo-400"
+            className="text-[10px] h-6 py-0.5 ml-auto border-brand-blue/20 hover:bg-brand-blue/10 text-brand-blue"
           >
             <Sparkle size={10} weight="fill" />
             AI Draft Reply

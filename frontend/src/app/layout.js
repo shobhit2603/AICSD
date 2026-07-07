@@ -15,7 +15,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.className} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#07090e] text-slate-100">
+      <body className="min-h-full flex bg-slate-50 text-brand-black">
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
